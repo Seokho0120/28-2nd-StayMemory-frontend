@@ -62,7 +62,7 @@ export default function List() {
         quantity.adult
       }&child=${quantity.child}&baby=${
         quantity.baby
-      }&minprice=${0}&maxprice=${100000}${categories.current}`
+      }&minprice=${0}&maxprice=${10000}${categories.current}`
     )
       .then(res => res.json())
       .then(res => setHotel(res.data));
