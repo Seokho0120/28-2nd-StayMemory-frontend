@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 
 import {
   ModalPeopleBtn,
@@ -12,12 +11,43 @@ import {
 } from '../List';
 import { AiOutlineClose } from 'react-icons/ai';
 
-const useCounter = () => {
-  const [quantity, setQuantity] = useState({
-    adult: 0,
-    child: 0,
-    baby: 0,
-  });
+// const useCounter = () => {
+//   const [quantity, setQuantity] = useState({
+//     adult: 0,
+//     child: 0,
+//     baby: 0,
+//   });
+
+//   const plusQuantity = name => {
+//     setQuantity({
+//       ...quantity,
+//       [name]: quantity[name] + 1,
+//     });
+//   };
+
+//   const minusQuantity = name => {
+//     setQuantity({
+//       ...quantity,
+//       [name]: quantity[name] < 1 ? 0 : quantity[name] - 1,
+//     });
+//   };
+
+//   return { quantity, plusQuantity, minusQuantity };
+// };
+
+export default function SelectPeople({
+  closeHandler,
+  handleFilter,
+  getSelectedPeople,
+  quantity,
+  setQuantity,
+}) {
+  // const { quantity, plusQuantity, minusQuantity } = useCounter();
+  // const [quantity, setQuantity] = useState({
+  //   adult: 0,
+  //   child: 0,
+  //   baby: 0,
+  // });
 
   const plusQuantity = name => {
     setQuantity({
@@ -32,12 +62,6 @@ const useCounter = () => {
       [name]: quantity[name] < 1 ? 0 : quantity[name] - 1,
     });
   };
-
-  return { quantity, plusQuantity, minusQuantity };
-};
-
-export default function SelectPeople({ closeHandler, handleFilter }) {
-  const { quantity, plusQuantity, minusQuantity } = useCounter(0);
 
   const COUNTER_DATA = [
     { id: 1, type: '성인', name: 'adult' },
@@ -77,7 +101,8 @@ export default function SelectPeople({ closeHandler, handleFilter }) {
           })}
       </div>
       <ModalPeopleBtnWrapper>
-        <ModalPeopleBtn onClick={() => handleFilter(quantity)}>
+        <ModalPeopleBtn onClick={() => getSelectedPeople()}>
+          {/* <ModalPeopleBtn onClick={() => handleFilter(quantity)}> */}
           적용하기
         </ModalPeopleBtn>
       </ModalPeopleBtnWrapper>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
-import axiosRequest from './axios/axiosRequest';
+// import axios from 'axios';
+// import axiosRequest from './axios/axiosRequest';
 import SelectPeople from './SelectPeople/SelectPeople';
 import SelectPrice from './SelectPrice/SelectPrice';
 import SelectType from './SelectType/SelectType';
@@ -80,11 +80,11 @@ export default function List() {
       .then(res => setHotel(res.data));
   }, [location.search]);
 
-  useEffect(() => {
-    axiosRequest({ url: '/stays' })
-      .then(res => res.data)
-      .catch(err => alert(err));
-  }, []);
+  // useEffect(() => {
+  //   axiosRequest({ url: '/stays' })
+  //     .then(res => res.data)
+  //     .catch(err => alert(err));
+  // }, []);
 
   // useEffect(() => {
   //   axios
