@@ -1,3 +1,4 @@
+// 수정 시작
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import SelectPeople from './SelectPeople/SelectPeople';
