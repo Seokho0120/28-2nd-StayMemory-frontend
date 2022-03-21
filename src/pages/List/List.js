@@ -1,6 +1,7 @@
-// 수정 시작
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import axiosRequest from './axios/axiosRequest';
 import SelectPeople from './SelectPeople/SelectPeople';
 import SelectPrice from './SelectPrice/SelectPrice';
 import SelectType from './SelectType/SelectType';
@@ -17,10 +18,26 @@ import { useNavigate } from 'react-router-dom';
 
 export default function List() {
   const [hotel, setHotel] = useState([]);
-
   const navigate = useNavigate();
   const location = useLocation();
   const [currentID, setCurrentID] = useState();
+  const [quantity, setQuantity] = useState({
+    adult: 0,
+    child: 0,
+    baby: 0,
+  });
+  const categories = useRef('');
+
+  const getSelectedPeople = () => {
+    setCurrentID(false);
+  };
+  const getSelectedCategory = item => {
+    // setCurrentID(false);
+    setCurrentID(false);
+    Object.entries(item).map(([key, value]) => {
+      categories.current = `${categories.current}&category=${key}`;
+    });
+  };
 
   const handleFilter = stateObj => {
     const URLSearch = new URLSearchParams(location.search);
@@ -34,7 +51,28 @@ export default function List() {
     navigate(`/list?` + URLSearch.toString());
     closeHandler();
   };
+
+  // 원래는 적용하기 버튼을 눌렀을때 query string을 붙여주고 query string이 변경되면 useEffect에서 API호출을 함
+  // 리팩토링 : 적용하기 버튼을 눌렀을때 모달창만 닫아주고, 서치버튼을 눌렀을때 API호출을 한다.
+
+  const fetchSearchResult = () => {
+    fetch(
+      // `http://ec2-3-36-124-170.ap-northeast-2.compute.amazonaws.com/stays?adult=${quantity.adult}&child=${quantity.child}&baby=${quantity.baby}`
+      `http://ec2-3-36-124-170.ap-northeast-2.compute.amazonaws.com/stays?adult=${
+        quantity.adult
+      }&child=${quantity.child}&baby=${
+        quantity.baby
+      }&minprice=${0}&maxprice=${100000}${categories.current}`
+    )
+      .then(res => res.json())
+      .then(res => setHotel(res.data));
+  };
+
   useEffect(() => {
+    // axios.get(`http://ec2-3-36-124-170.ap-northeast-2.compute.amazonaws.com/stays${location.search}`)
+    // .then((result) => {
+    //   console.log(result)
+    // }).catch((r)=>{consol.log(r)})
     fetch(
       `http://ec2-3-36-124-170.ap-northeast-2.compute.amazonaws.com/stays${location.search}`
     )
@@ -43,10 +81,23 @@ export default function List() {
   }, [location.search]);
 
   useEffect(() => {
-    fetch('http://ec2-3-36-124-170.ap-northeast-2.compute.amazonaws.com/stays')
-      .then(res => res.json())
-      .then(res => setHotel(res.data));
+    axiosRequest({ url: '/stays' })
+      .then(res => res.data)
+      .catch(err => alert(err));
   }, []);
+
+  // useEffect(() => {
+  //   axios
+  //     .get('http://ec2-3-36-124-170.ap-northeast-2.compute.amazonaws.com/stays')
+  //     .then(res => res.data)
+  //     .catch(err => alert(err));
+  // }, []);
+
+  // useEffect(() => {
+  //   fetch('http://ec2-3-36-124-170.ap-northeast-2.compute.amazonaws.com/stays')
+  //     .then(res => res.json())
+  //     .then(res => setHotel(res.data));
+  // }, []);
 
   const clickHandler = id => {
     setCurrentID(id);
@@ -75,6 +126,9 @@ export default function List() {
                 <SelectPeople
                   closeHandler={closeHandler}
                   handleFilter={handleFilter}
+                  getSelectedPeople={getSelectedPeople}
+                  quantity={quantity}
+                  setQuantity={setQuantity}
                 />
               )}
             </div>
@@ -99,6 +153,7 @@ export default function List() {
                 <SelectType
                   closeHandler={closeHandler}
                   handleFilter={handleFilter}
+                  getSelectedCategory={getSelectedCategory}
                 />
               )}
             </div>
@@ -121,7 +176,11 @@ export default function List() {
         </FilterOther>
       </Filter>
       <SearchBtnWrapper>
-        <SearchBtn>
+        <SearchBtn
+          onClick={() => {
+            fetchSearchResult();
+          }}
+        >
           SEARCH
           <BsArrowRight />
         </SearchBtn>
